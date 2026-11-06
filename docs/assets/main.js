@@ -147,10 +147,6 @@
     opacity: 1, ease: 'none', stagger: 0.1,
     scrollTrigger: { trigger: '.about__text', start: 'top 78%', end: 'bottom 50%', scrub: true },
   });
-  $$('.about__text .hl').forEach((hl) => {
-    if (reduce) { hl.classList.add('is-lit'); return; }
-    ScrollTrigger.create({ trigger: hl, start: 'top 62%', onEnter: () => hl.classList.add('is-lit'), onLeaveBack: () => hl.classList.remove('is-lit') });
-  });
   $$('.stat [data-to]').forEach((el) => {
     const to = Number(el.dataset.to);
     const suffix = el.dataset.suffix || '';

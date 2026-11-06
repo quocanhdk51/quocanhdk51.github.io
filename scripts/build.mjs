@@ -5,6 +5,7 @@ import { chromium } from 'playwright';
 import { readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dist = path.join(root, 'dist');
@@ -50,7 +51,11 @@ try {
   await sp.goto(pathToFileURL(path.join(root, 'site/index.html')).href);
   // evaluate still works with page JS disabled
   await sp.evaluate(applyProfile, profile);
-  const html = '<!doctype html>\n' + await sp.evaluate(() => document.documentElement.outerHTML);
+  let html = '<!doctype html>\n' + await sp.evaluate(() => document.documentElement.outerHTML);
+  for (const f of ['styles.css', 'main.js']) {
+    const v = createHash('sha1').update(await readFile(path.join(root, 'site/assets', f))).digest('hex').slice(0, 8);
+    html = html.replaceAll(`assets/${f}"`, `assets/${f}?v=${v}"`);
+  }
   await writeFile(path.join(dist, 'index.html'), html);
   await cp(path.join(root, 'site/assets'), path.join(dist, 'assets'), { recursive: true });
   await cp(path.join(dist, PDF_NAME), path.join(dist, 'assets', PDF_NAME));
