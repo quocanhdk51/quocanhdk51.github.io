@@ -46,16 +46,22 @@
     }
     return $$('.ch', el);
   }
+  // Wraps every word in a span, keeping inline markup such as <strong> intact.
   function splitWords(el) {
-    const words = el.textContent.trim().split(/\s+/);
-    el.textContent = '';
-    words.forEach((w, i) => {
-      const s = document.createElement('span');
-      s.className = 'w';
-      s.textContent = w;
-      el.appendChild(s);
-      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
-    });
+    for (const node of [...el.childNodes]) {
+      if (node.nodeType === Node.ELEMENT_NODE) { splitWords(node); continue; }
+      if (node.nodeType !== Node.TEXT_NODE || !node.textContent.trim()) continue;
+      const frag = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach((part) => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+        const s = document.createElement('span');
+        s.className = 'w';
+        s.textContent = part;
+        frag.appendChild(s);
+      });
+      node.replaceWith(frag);
+    }
     return $$('.w', el);
   }
 
@@ -136,9 +142,14 @@
 
   /* ---------- about: words light up as you read ---------- */
   const words = splitWords($('.reveal-words'));
-  gsap.fromTo(words, { opacity: 0.14 }, {
+  // Key phrases start brighter than the rest so they read even before the reveal reaches them.
+  gsap.fromTo(words, { opacity: (i, w) => (w.closest('.hl') ? 0.55 : 0.14) }, {
     opacity: 1, ease: 'none', stagger: 0.1,
     scrollTrigger: { trigger: '.about__text', start: 'top 78%', end: 'bottom 50%', scrub: true },
+  });
+  $$('.about__text .hl').forEach((hl) => {
+    if (reduce) { hl.classList.add('is-lit'); return; }
+    ScrollTrigger.create({ trigger: hl, start: 'top 62%', onEnter: () => hl.classList.add('is-lit'), onLeaveBack: () => hl.classList.remove('is-lit') });
   });
   $$('.stat [data-to]').forEach((el) => {
     const to = Number(el.dataset.to);
