@@ -295,6 +295,10 @@ html:not(.js) .pipeline__steps li { border-color: var(--accent); }
 .contact { padding: clamp(96px, 14vw, 200px) var(--gutter) clamp(64px, 8vw, 120px); max-width: 1440px; margin: 0 auto; }
 .contact__title { font-size: clamp(56px, 12.5vw, 200px); line-height: .9; letter-spacing: -.05em; font-weight: 800; }
 .contact__title .serif-split { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); letter-spacing: -.03em; }
+/* The reveal mask (.line overflow:hidden) clipped the italic serif: descenders below, slant at the sides.
+   Pad the mask outward and pull it back with negative margins so the layout does not move. */
+.contact__title .line { padding: 0 .12em .06em; margin: 0 -.12em; }
+.contact__title .line:last-child { padding-bottom: .26em; margin-bottom: -.2em; }
 .contact__actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: clamp(40px, 6vw, 72px); align-items: center; }
 .contact__links { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 40px; font: 14px var(--mono); }
 .contact__links a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; transition: color .3s, border-color .3s; }
