@@ -1,0 +1,19 @@
+{
+  "name": "alex-bui-cv",
+  "version": "1.0.0",
+  "description": "ATS-optimized CV PDF and animated portfolio site",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "python3 -m http.server 4173 -d dist",
+    "shots": "node scripts/screenshots.mjs",
+    "deploy:prep": "npm run build && rm -rf docs && cp -r dist docs && rm -f docs/*.extracted.txt && touch docs/.nojekyll"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "pdfjs-dist": "^4.10.38",
+    "playwright": "^1.63.0"
+  },
+  "private": true
+}
